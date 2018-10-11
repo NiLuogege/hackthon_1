@@ -26,6 +26,7 @@ public class DemoActivirty extends AppCompatActivity {
     private int imageHeight;
     private int statusBarHeight;
     private ExplosionField explosionField;
+    private MediaPlayer mMediaPlayer;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -44,6 +45,18 @@ public class DemoActivirty extends AppCompatActivity {
 
         explosionField = ExplosionField.attach2Window(this);
 
+        mMediaPlayer = MediaPlayer.create(DemoActivirty.this, R.raw.lc);
+
+        explosionField.setExplosionLisenner(new ExplosionField.onExplosionListener() {
+            @Override
+            public void onExplosionEnd() {
+                if (mMediaPlayer != null){
+                    mMediaPlayer.stop();
+                    mMediaPlayer.release();
+                }
+            }
+        });
+
 //        Log.e("DemoActivirty", "imagewidth:" + imagewidth + " imageHeight:" + imageHeight + " screenwidth: " + screenSize[0] + " screenHeight: " + screenSize[1]);
 
         btn.setOnClickListener(new View.OnClickListener() {
@@ -51,10 +64,7 @@ public class DemoActivirty extends AppCompatActivity {
             public void onClick(View view) {
                 float randomX = getRandomX();
                 float randomY = getRandomY();
-//                if (randomY > 1770) {
-//                    Log.e("DemoActivirty", "越界了");
-//                }
-//                Log.e("DemoActivirty", "randomX:" + randomX + " randomY:" + randomY);
+
                 riv.setAlpha(1);
                 riv.setScaleX(1);
                 riv.setScaleY(1);
@@ -64,10 +74,11 @@ public class DemoActivirty extends AppCompatActivity {
         });
 
         riv.setOnClickListener(new View.OnClickListener() {
+
+
             @Override
             public void onClick(View v) {
-                explosionField.explode(v);
-                MediaPlayer mMediaPlayer= MediaPlayer.create(DemoActivirty.this, R.raw.a);
+                explosionField.explode(v,200);
                 mMediaPlayer.start();
             }
         });

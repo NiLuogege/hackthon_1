@@ -17,27 +17,29 @@ package com.niluogege.example.fastcodeframe.view.explosionfield;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 
+import com.niluogege.example.commonres.BuildConfig;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 
 public class ExplosionField extends View {
 
     private List<ExplosionAnimator> mExplosions = new ArrayList<>();
     private int[] mExpandInset = new int[2];
+    private onExplosionListener explosionLisenner=null;
 
     public ExplosionField(Context context) {
         super(context);
@@ -77,6 +79,7 @@ public class ExplosionField extends View {
             @Override
             public void onAnimationEnd(Animator animation) {
                 mExplosions.remove(animation);
+                if (BuildConfig.DEBUG) Log.e("ExplosionField", "explode");
             }
         });
         explosion.setStartDelay(startDelay);
@@ -129,6 +132,19 @@ public class ExplosionField extends View {
         rootView.addView(explosionField, new ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         return explosionField;
+    }
+
+    public interface onExplosionListener {
+        void onExplosionEnd();
+    }
+
+
+    public onExplosionListener getExplosionListener() {
+        return explosionLisenner;
+    }
+
+    public void setExplosionLisenner(onExplosionListener explosionLisenner) {
+        this.explosionLisenner = explosionLisenner;
     }
 
 }
