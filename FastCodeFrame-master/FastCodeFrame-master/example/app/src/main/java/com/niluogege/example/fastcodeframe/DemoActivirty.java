@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import com.niluogege.example.fastcodeframe.bean.VideoInfo;
 import com.niluogege.example.fastcodeframe.utils.Constant;
 import com.niluogege.example.fastcodeframe.utils.SPUtil;
+import com.niluogege.example.fastcodeframe.utils.StatusBarUtil;
 import com.niluogege.example.fastcodeframe.view.explosionfield.ExplosionField;
 
 import java.util.Random;
@@ -36,6 +37,7 @@ public class DemoActivirty extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_demo);
+        StatusBarUtil.setTransparentForImageViewInFragment(this, null);
 
         screenSize = getScreenSize(this);
         statusBarHeight = getStatusBarHeight(this);

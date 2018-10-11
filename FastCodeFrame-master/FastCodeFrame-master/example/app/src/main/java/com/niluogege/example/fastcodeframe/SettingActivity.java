@@ -11,6 +11,7 @@ import com.niluogege.example.fastcodeframe.adapter.ImageListAdapter;
 import com.niluogege.example.fastcodeframe.adapter.VideoListAdapter;
 import com.niluogege.example.fastcodeframe.bean.VideoInfo;
 import com.niluogege.example.fastcodeframe.utils.DialogUtil;
+import com.niluogege.example.fastcodeframe.utils.StatusBarUtil;
 import com.orhanobut.dialogplus.DialogPlus;
 
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ public class SettingActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
+        StatusBarUtil.setTransparentForImageViewInFragment(this, null);
         bind = ButterKnife.bind(this);
 
 
