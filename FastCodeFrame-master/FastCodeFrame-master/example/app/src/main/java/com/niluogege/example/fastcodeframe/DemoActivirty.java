@@ -6,10 +6,13 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
 
+import com.niluogege.example.fastcodeframe.bean.VideoInfo;
+import com.niluogege.example.fastcodeframe.utils.Constant;
+import com.niluogege.example.fastcodeframe.utils.SPUtil;
 import com.niluogege.example.fastcodeframe.view.explosionfield.ExplosionField;
 
 import java.util.Random;
@@ -27,6 +30,7 @@ public class DemoActivirty extends AppCompatActivity {
     private int statusBarHeight;
     private ExplosionField explosionField;
     private MediaPlayer mMediaPlayer;
+    private View riv;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -37,7 +41,7 @@ public class DemoActivirty extends AppCompatActivity {
         statusBarHeight = getStatusBarHeight(this);
 
         View btn = findViewById(R.id.btn);
-        View riv = findViewById(R.id.riv);
+        riv = findViewById(R.id.riv);
 
 
         imagewidth = dip2px(this, 50);
@@ -45,12 +49,13 @@ public class DemoActivirty extends AppCompatActivity {
 
         explosionField = ExplosionField.attach2Window(this);
 
-        mMediaPlayer = MediaPlayer.create(DemoActivirty.this, R.raw.lc);
+        setVideo();
+        setImage();
 
         explosionField.setExplosionLisenner(new ExplosionField.onExplosionListener() {
             @Override
             public void onExplosionEnd() {
-                if (mMediaPlayer != null){
+                if (mMediaPlayer != null) {
                     mMediaPlayer.stop();
                     mMediaPlayer.release();
                 }
@@ -78,11 +83,33 @@ public class DemoActivirty extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-                explosionField.explode(v,200);
-                mMediaPlayer.start();
+                explosionField.explode(v, 200);
+                if (mMediaPlayer != null) {
+                    mMediaPlayer.start();
+                }
             }
         });
 
+    }
+
+    private void setImage() {
+        Object o = SPUtil.get(SPUtil.PRODUCT_PROPERTY, Constant.IMAGE_SELECT);
+        if (o != null) {
+            Integer image = MAppAplication.getInstance().imageMap.get(o);
+            ((ImageView) riv).setImageResource(image);
+        } else {
+            ((ImageView) riv).setImageResource(R.mipmap.tx_1);
+        }
+    }
+
+    private void setVideo() {
+        Object o = SPUtil.get(SPUtil.PRODUCT_PROPERTY, Constant.VIDEO_SELECT);
+        if (o != null) {
+            VideoInfo videoInfo = MAppAplication.getInstance().voideMap.get(o);
+            mMediaPlayer = MediaPlayer.create(DemoActivirty.this, videoInfo.getFileName());
+        } else {
+            mMediaPlayer = MediaPlayer.create(DemoActivirty.this, R.raw.a);
+        }
     }
 
     private float getRandomX() {

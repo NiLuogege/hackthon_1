@@ -34,13 +34,9 @@ public class SettingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_setting);
         ButterKnife.bind(this);
 
-        videoInfos = new ArrayList<>();
-        videoInfos.add(new VideoInfo("默认", R.raw.a));
-        videoInfos.add(new VideoInfo("NiLuogege", R.raw.lc));
 
-        imageInfos.add(R.mipmap.tx_1);
-        imageInfos.add(R.mipmap.tx_2);
-        imageInfos.add(R.mipmap.tx_3);
+        videoInfos = new ArrayList<>(MAppAplication.getInstance().voideMap.values());
+        imageInfos = new ArrayList<>(MAppAplication.getInstance().imageMap.values());
     }
 
     @OnClick(R.id.btn_video)

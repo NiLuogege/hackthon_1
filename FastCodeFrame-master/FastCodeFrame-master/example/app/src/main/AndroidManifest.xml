@@ -3,7 +3,7 @@
     package="com.niluogege.example.fastcodeframe">
 
     <application
-        android:name="com.niluogege.example.commonsdk.base.BaseApplication"
+        android:name=".MAppAplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
