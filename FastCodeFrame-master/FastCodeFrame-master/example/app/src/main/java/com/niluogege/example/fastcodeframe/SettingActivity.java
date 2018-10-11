@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 
 import com.niluogege.example.fastcodeframe.adapter.ImageListAdapter;
 import com.niluogege.example.fastcodeframe.adapter.VideoListAdapter;
+import com.niluogege.example.fastcodeframe.bean.ImageInfo;
 import com.niluogege.example.fastcodeframe.bean.VideoInfo;
 import com.niluogege.example.fastcodeframe.utils.DialogUtil;
 import com.niluogege.example.fastcodeframe.utils.StatusBarUtil;
@@ -28,7 +29,7 @@ import butterknife.Unbinder;
 public class SettingActivity extends AppCompatActivity {
 
     private List<VideoInfo> videoInfos = new ArrayList<>();
-    private List<Integer> imageInfos = new ArrayList<>();
+    private List<ImageInfo> imageInfos = new ArrayList<>();
     private Unbinder bind;
 
     @Override

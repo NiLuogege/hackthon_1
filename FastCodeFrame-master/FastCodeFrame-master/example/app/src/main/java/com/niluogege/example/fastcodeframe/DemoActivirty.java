@@ -96,7 +96,7 @@ public class DemoActivirty extends AppCompatActivity {
     private void setImage() {
         Object o = SPUtil.get(SPUtil.PRODUCT_PROPERTY, Constant.IMAGE_SELECT);
         if (o != null) {
-            Integer image = MAppAplication.getInstance().imageMap.get(o);
+            Integer image = MAppAplication.getInstance().imageMap.get(o).getImage();
             ((ImageView) riv).setImageResource(image);
         } else {
             ((ImageView) riv).setImageResource(R.mipmap.tx_1);
