@@ -1,0 +1,17 @@
+apply from: "../common_component_build.gradle"
+
+android {
+    resourcePrefix "user_"//给module 内的资源增加前缀，防止冲突
+
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation deps.support.appcompatV7
+    testImplementation deps.junit
+    androidTestImplementation deps.testRunner
+    androidTestImplementation deps.testEspresso
+
+    //依赖 commonres
+    api project(':commonres')
+}

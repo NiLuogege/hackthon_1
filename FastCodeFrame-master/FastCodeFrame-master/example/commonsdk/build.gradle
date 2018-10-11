@@ -1,0 +1,65 @@
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion versions.compileSdkVersion
+    defaultConfig {
+        minSdkVersion versions.minSdkVersion
+        targetSdkVersion versions.targetSdkVersion
+        versionCode versions.versionCode
+        versionName versions.versionName
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+
+    buildTypes {
+        debug {
+            buildConfigField "boolean", "LOG_DEBUG", "true"
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+
+        release {
+            buildConfigField "boolean", "LOG_DEBUG", "false"
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    api deps.constraintLayout
+    api(deps.arouter.arouterApi) {
+        exclude module: 'support-v4'
+        exclude module: 'support-annotations'
+    }
+
+    /*rxandroid和rxjava*/
+    api deps.rx.rxjava
+    api deps.rx.rxandroid
+    /* RxLifeCycle */
+    api deps.rx.rxlifecycle
+    api deps.rx.rxlifecycleComponents
+
+    /*retrofit*/
+    api deps.retrofit.retrofit
+    api deps.retrofit.adapterRxjava2
+    api deps.retrofit.converterGson
+    api deps.okhttp3.interceptorLogging
+
+    /*fastjson*/
+    api deps.fastjson
+    /*multidex*/
+    api deps.multidex
+    /*logger*/
+    api deps.logger
+    /*dialogplus*/
+    api deps.dialogplus
+}

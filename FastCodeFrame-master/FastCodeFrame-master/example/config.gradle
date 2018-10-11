@@ -1,0 +1,67 @@
+//管理全局依赖
+ext {
+    versions = [
+            compileSdkVersion : 28,
+            minSdkVersion     : 15,
+            targetSdkVersion  : 28,
+            versionCode       : 1,
+            versionName       : "1.0",
+
+
+            supportLibrary    : "28.0.0-rc01",
+            constraintLayout  : "1.1.2",
+            junit             : "4.12",
+            testRunner        : "1.0.2",
+            testEspresso      : "3.0.2",
+            arouterApi        : "1.4.0",
+            arouterCompiler   : "1.2.1",
+            rxjava            : '2.2.0',
+            rxandroid         : '2.1.0',
+            rxlifecycle       : '2.2.2',
+            retrofit          : "2.4.0",
+            interceptorLogging: "3.11.0",
+            fastjson          : "1.2.49",
+            multidex          : "1.0.1",
+
+
+    ]
+
+    deps = [
+            support         : [
+                    appcompatV7: "com.android.support:appcompat-v7:${versions.supportLibrary}",
+            ],
+
+            arouter         : [
+                    arouterApi     : "com.alibaba:arouter-api:${versions.arouterApi}",
+                    arouterCompiler: "com.alibaba:arouter-compiler:${versions.arouterCompiler}"
+            ],
+
+            rx              : [
+                    rxjava               : "io.reactivex.rxjava2:rxjava:${versions.rxjava}",
+                    rxandroid            : "io.reactivex.rxjava2:rxandroid:${versions.rxandroid}",
+                    rxlifecycle          : "com.trello.rxlifecycle2:rxlifecycle:${versions.rxlifecycle}",//对rxjava生命周期进行管理
+                    rxlifecycleComponents: "com.trello.rxlifecycle2:rxlifecycle-components:${versions.rxlifecycle}"//对rxjava生命周期进行管理
+            ],
+
+            retrofit        : [
+                    retrofit      : "com.squareup.retrofit2:retrofit:${versions.retrofit}",//必要retrofit依赖
+                    adapterRxjava2: "com.squareup.retrofit2:adapter-rxjava2:${versions.retrofit}",//和Rxjava结合必须用到，
+                    converterGson : "com.squareup.retrofit2:converter-gson:${versions.retrofit}",//gson 解析
+
+            ],
+
+            okhttp3         : [
+                    interceptorLogging: "com.squareup.okhttp3:logging-interceptor:${versions.interceptorLogging}",//okhttp日志打印
+            ],
+
+            constraintLayout: "com.android.support.constraint:constraint-layout:${versions.constraintLayout}",
+            junit           : "junit:junit:${versions.junit}",
+            testRunner      : "com.android.support.test:runner:${versions.testRunner}",
+            testEspresso    : "com.android.support.test.espresso:espresso-core:${versions.testEspresso}",
+            fastjson        : "com.alibaba:fastjson:${versions.fastjson}",//json解析
+            multidex        : "com.android.support:multidex:${versions.multidex}",//multidex 用于解决方法数爆棚
+            logger          : "com.orhanobut:logger:2.2.0",//logger
+            dialogplus      : "com.orhanobut:dialogplus:1.11@aar",//dialog Uitls
+
+    ]
+}

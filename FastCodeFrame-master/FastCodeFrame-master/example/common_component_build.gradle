@@ -1,0 +1,102 @@
+if (isModule.toBoolean()) {
+    apply plugin: 'com.android.application'
+} else {
+    apply plugin: 'com.android.library'
+}
+
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    compileSdkVersion versions.compileSdkVersion
+
+    compileOptions {
+        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_1_8
+    }
+
+    defaultConfig {
+        minSdkVersion versions.minSdkVersion///Android 4.4
+        targetSdkVersion versions.targetSdkVersion //Android 7.1.1
+        versionCode versions.versionCode
+        versionName versions.versionName
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments = [AROUTER_MODULE_NAME: project.getName()]
+                includeCompileClasspath true
+            }
+        }
+
+    }
+
+    buildTypes {
+        debug {
+            buildConfigField "boolean", "LOG_DEBUG", "true"
+            buildConfigField "boolean", "USE_CANARY", "true"
+            buildConfigField "boolean", "IS_MODULE", "${isModule}"
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+
+        release {
+            buildConfigField "boolean", "LOG_DEBUG", "false"
+            buildConfigField "boolean", "USE_CANARY", "false"
+            buildConfigField "boolean", "IS_MODULE", "${isModule}"
+            minifyEnabled true
+            if (isModule.toBoolean()) {
+                shrinkResources true
+            }
+            zipAlignEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    //由于组件在独立运行时和集成到宿主时可能需要 AndroidManifest 配置不一样的参数, 比如组件在独立运行时需要其中的一个 Activity 配置了
+// <action android:name="android.intent.action.MAIN"/> 作为入口, 而当组件集成到宿主中时, 则依赖于宿主的入口, 所以不需要配置
+// <action android:name="android.intent.action.MAIN"/>, 这时我们就需要两个不同的 AndroidManifest 应对不同的情况
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ['libs']
+            if (isModule.toBoolean()) {
+                manifest.srcFile 'src/main/debug/AndroidManifest.xml'
+            } else {
+                manifest.srcFile 'src/main/release/AndroidManifest.xml'
+            }
+        }
+    }
+
+}
+
+////com.android.support包名的库版本都是用24.1.0
+//configurations.all {
+//    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+//        def requested = details.requested
+//        if (requested.group == 'com.android.support') {
+//            if (!requested.name.startsWith("multidex")) {
+//                details.useVersion versions.supportLibrary
+//            }
+//        }
+//    }
+//}
+
+
+dependencies {
+    if (isModule.toBoolean()) {
+        /*路由编译器 这个得分开配置*/
+        annotationProcessor deps.arouter.arouterCompiler
+    } else {
+        /*路由编译器 这个得分开配置*/
+        compileOnly deps.arouter.arouterCompiler
+    }
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+
+}
+
+repositories {
+    mavenCentral()
+}
