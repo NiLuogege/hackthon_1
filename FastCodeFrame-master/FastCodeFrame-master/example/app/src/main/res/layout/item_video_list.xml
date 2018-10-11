@@ -4,9 +4,19 @@
     android:layout_width="match_parent"
     android:layout_height="50dp"
     android:background="@android:color/white"
+    android:gravity="center_vertical"
     android:orientation="horizontal"
+    android:id="@+id/ll_root"
     android:paddingLeft="10dp"
     android:paddingRight="10dp">
+
+    <ImageView
+        android:id="@+id/iv_duigou"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="10dp"
+        android:src="@mipmap/duigou"
+        android:visibility="invisible" />
 
     <TextView
         android:id="@+id/tv_people"
