@@ -51,17 +51,16 @@ dependencies {
     testImplementation deps.junit
     androidTestImplementation deps.testRunner
     androidTestImplementation deps.testEspresso
-
-
     if (!isModule.toBoolean()) {
         runtimeOnly project(":module-user")
     }
-
     /*commonres 依赖了 commonSDK*/
     implementation project(':commonres')
-
     /*路由编译器 每个application中都要配置 */
     annotationProcessor deps.arouter.arouterCompiler
-
     implementation 'com.github.Othershe:NiceImageView:1.0.1'
+    implementation 'com.jakewharton:butterknife:9.0.0-rc1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:9.0.0-rc1'
+    compile 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.30'
+    implementation 'com.android.support:recyclerview-v7:28.0.0'
 }
