@@ -23,12 +23,9 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-
-import com.niluogege.example.commonres.BuildConfig;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,7 +36,7 @@ public class ExplosionField extends View {
 
     private List<ExplosionAnimator> mExplosions = new ArrayList<>();
     private int[] mExpandInset = new int[2];
-    private onExplosionListener explosionLisenner=null;
+    private onExplosionListener explosionLisenner = null;
 
     public ExplosionField(Context context) {
         super(context);
@@ -79,7 +76,7 @@ public class ExplosionField extends View {
             @Override
             public void onAnimationEnd(Animator animation) {
                 mExplosions.remove(animation);
-                if (BuildConfig.DEBUG) Log.e("ExplosionField", "explode");
+                if (explosionLisenner != null) explosionLisenner.onExplosionEnd();
             }
         });
         explosion.setStartDelay(startDelay);

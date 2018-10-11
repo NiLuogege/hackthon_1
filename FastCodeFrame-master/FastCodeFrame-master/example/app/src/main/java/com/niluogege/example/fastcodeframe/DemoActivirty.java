@@ -56,8 +56,7 @@ public class DemoActivirty extends AppCompatActivity {
             @Override
             public void onExplosionEnd() {
                 if (mMediaPlayer != null) {
-                    mMediaPlayer.stop();
-                    mMediaPlayer.release();
+                    mMediaPlayer.pause();
                 }
             }
         });
@@ -160,5 +159,14 @@ public class DemoActivirty extends AppCompatActivity {
             result = context.getResources().getDimensionPixelSize(resourceId);
         }
         return result;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mMediaPlayer != null) {
+            mMediaPlayer.stop();
+            mMediaPlayer.release();
+        }
     }
 }

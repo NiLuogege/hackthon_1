@@ -18,6 +18,7 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 
 /**
  * Created by niluogege on 2018/10/11.
@@ -27,12 +28,13 @@ public class SettingActivity extends AppCompatActivity {
 
     private List<VideoInfo> videoInfos = new ArrayList<>();
     private List<Integer> imageInfos = new ArrayList<>();
+    private Unbinder bind;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
-        ButterKnife.bind(this);
+        bind = ButterKnife.bind(this);
 
 
         videoInfos = new ArrayList<>(MAppAplication.getInstance().voideMap.values());
@@ -64,5 +66,11 @@ public class SettingActivity extends AppCompatActivity {
     @OnClick(R.id.btn_begin)
     public void begin() {
         startActivity(new Intent(this, DemoActivirty.class));
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (bind != null) bind.unbind();
     }
 }
