@@ -48,7 +48,7 @@ public class SettingActivity extends AppCompatActivity {
 
         RecyclerView rv = (RecyclerView) dialogPlus.findViewById(R.id.rv);
         rv.setLayoutManager(new LinearLayoutManager(SettingActivity.this));
-        VideoListAdapter adapter = new VideoListAdapter(R.layout.item_video_list, videoInfos);
+        VideoListAdapter adapter = new VideoListAdapter(dialogPlus,R.layout.item_video_list, videoInfos);
         rv.setAdapter(adapter);
         dialogPlus.show();
     }
@@ -58,7 +58,7 @@ public class SettingActivity extends AppCompatActivity {
         DialogPlus dialogPlus = DialogUtil.createCommonDialog(this, R.layout.dialog_video_list, null);
         RecyclerView rv = (RecyclerView) dialogPlus.findViewById(R.id.rv);
         rv.setLayoutManager(new LinearLayoutManager(SettingActivity.this));
-        ImageListAdapter adapter = new ImageListAdapter(R.layout.item_image_list, imageInfos);
+        ImageListAdapter adapter = new ImageListAdapter(dialogPlus,R.layout.item_image_list, imageInfos);
         rv.setAdapter(adapter);
         dialogPlus.show();
     }

@@ -7,6 +7,7 @@ import com.chad.library.adapter.base.BaseViewHolder;
 import com.niluogege.example.fastcodeframe.R;
 import com.niluogege.example.fastcodeframe.utils.Constant;
 import com.niluogege.example.fastcodeframe.utils.SPUtil;
+import com.orhanobut.dialogplus.DialogPlus;
 
 import java.util.List;
 
@@ -15,11 +16,13 @@ import java.util.List;
  */
 
 public class ImageListAdapter extends BaseQuickAdapter<Integer, BaseViewHolder> {
+    private final DialogPlus dialogPlus;
     private int imageVideo = 0;
 
 
-    public ImageListAdapter(int layoutResId, @Nullable List<Integer> data) {
+    public ImageListAdapter(DialogPlus dialogPlus, int layoutResId, @Nullable List<Integer> data) {
         super(layoutResId, data);
+        this.dialogPlus=dialogPlus;
     }
 
     @Override
@@ -36,7 +39,7 @@ public class ImageListAdapter extends BaseQuickAdapter<Integer, BaseViewHolder> 
 
         helper.setOnClickListener(R.id.ll_root, v -> {
             SPUtil.save(SPUtil.PRODUCT_PROPERTY, Constant.IMAGE_SELECT, helper.getAdapterPosition());
-            notifyDataSetChanged();
+            dialogPlus.dismiss();
         });
     }
 }

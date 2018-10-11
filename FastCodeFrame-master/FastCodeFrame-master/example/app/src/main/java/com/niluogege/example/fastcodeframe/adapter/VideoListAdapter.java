@@ -10,6 +10,7 @@ import com.niluogege.example.fastcodeframe.R;
 import com.niluogege.example.fastcodeframe.bean.VideoInfo;
 import com.niluogege.example.fastcodeframe.utils.Constant;
 import com.niluogege.example.fastcodeframe.utils.SPUtil;
+import com.orhanobut.dialogplus.DialogPlus;
 
 import java.util.List;
 
@@ -18,11 +19,13 @@ import java.util.List;
  */
 
 public class VideoListAdapter extends BaseQuickAdapter<VideoInfo, BaseViewHolder> {
+    private final DialogPlus dialogPlus;
     private MediaPlayer mMediaPlayer;
     private int selectVideo = 0;
 
-    public VideoListAdapter(int layoutResId, @Nullable List<VideoInfo> data) {
+    public VideoListAdapter(DialogPlus dialogPlus, int layoutResId, @Nullable List<VideoInfo> data) {
         super(layoutResId, data);
+        this.dialogPlus = dialogPlus;
     }
 
     @Override
@@ -44,7 +47,7 @@ public class VideoListAdapter extends BaseQuickAdapter<VideoInfo, BaseViewHolder
 
         helper.setOnClickListener(R.id.ll_root, v -> {
             SPUtil.save(SPUtil.PRODUCT_PROPERTY, Constant.VIDEO_SELECT, helper.getAdapterPosition());
-            notifyDataSetChanged();
+            dialogPlus.dismiss();
         });
     }
 
