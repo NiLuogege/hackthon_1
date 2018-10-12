@@ -28,6 +28,10 @@ public class MAppAplication extends BaseApplication {
         voideMap.put(2, new VideoInfo("林生-1", R.raw.ls_1));
         voideMap.put(3, new VideoInfo("林生-2", R.raw.ls_2));
         voideMap.put(3, new VideoInfo("NiLuogege", R.raw.lc));
+        voideMap.put(4, new VideoInfo("女性-1", R.raw.nv_1));
+        voideMap.put(5, new VideoInfo("女性-2", R.raw.nv_2));
+        voideMap.put(6, new VideoInfo("dog", R.raw.dog));
+        voideMap.put(7, new VideoInfo("pag", R.raw.pag));
 
         imageMap = new LinkedHashMap<>();
         imageMap.put(0, new ImageInfo("臭臭", R.mipmap.tx_1));
@@ -35,6 +39,9 @@ public class MAppAplication extends BaseApplication {
         imageMap.put(2, new ImageInfo("乐园的龙猫", R.mipmap.tx_3));
         imageMap.put(3, new ImageInfo("LY_1", R.mipmap.tx_4));
         imageMap.put(4, new ImageInfo("LY_2", R.mipmap.tx_5));
+        imageMap.put(5, new ImageInfo("XQ", R.mipmap.tx_6));
+        imageMap.put(6, new ImageInfo("LL", R.mipmap.tx_7));
+        imageMap.put(7, new ImageInfo("撅嘴的猫", R.mipmap.tx_8));
     }
 
     public static MAppAplication getInstance() {

@@ -26,8 +26,8 @@
 
         <com.othershe.library.NiceImageView
             android:id="@+id/riv"
-            android:layout_width="@dimen/qb_px_50"
-            android:layout_height="@dimen/qb_px_50"
+            android:layout_width="@dimen/qb_px_70"
+            android:layout_height="@dimen/qb_px_70"
             android:src="@mipmap/image_1"
             app:is_circle="true" />
     </LinearLayout>
