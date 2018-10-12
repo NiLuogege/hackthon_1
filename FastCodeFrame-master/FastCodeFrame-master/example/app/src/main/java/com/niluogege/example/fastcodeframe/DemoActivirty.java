@@ -6,16 +6,27 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
+import com.koushikdutta.async.ByteBufferList;
+import com.koushikdutta.async.DataEmitter;
+import com.koushikdutta.async.callback.DataCallback;
+import com.koushikdutta.async.http.AsyncHttpClient;
+import com.koushikdutta.async.http.WebSocket;
 import com.niluogege.example.fastcodeframe.bean.VideoInfo;
 import com.niluogege.example.fastcodeframe.utils.Constant;
 import com.niluogege.example.fastcodeframe.utils.SPUtil;
 import com.niluogege.example.fastcodeframe.utils.StatusBarUtil;
 import com.niluogege.example.fastcodeframe.view.explosionfield.ExplosionField;
 
+import org.java_websocket.client.WebSocketClient;
+import org.java_websocket.handshake.ServerHandshake;
+
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Random;
 
 
@@ -32,6 +43,7 @@ public class DemoActivirty extends AppCompatActivity {
     private ExplosionField explosionField;
     private MediaPlayer mMediaPlayer;
     private View riv;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -91,6 +103,109 @@ public class DemoActivirty extends AppCompatActivity {
             }
         });
 
+//        connectionWs();
+        connectionWs1();
+//        connectionWs2();
+
+    }
+
+//    private void connectionWs2() {
+//        try {
+//            uri = new URI(address);
+//        } catch (URISyntaxException e) {
+//            e.printStackTrace();
+//        }
+//        WebSocketClient webSocketClient = new WebSocketClient(uri, new Draft_75()) {
+//            @Override
+//            public void onOpen(ServerHandshake handshakedata) {
+//                Log.e(TAG, "run() returned: " + "连接到服务器");
+//            }
+//
+//            @Override
+//            public void onMessage(String message) {
+//                Log.e(TAG, "run() returned: " + message);
+//            }
+//
+//            @Override
+//            public void onClose(int code, String reason, boolean remote) {
+//                Log.e(TAG, "onClose() returned: " + reason);
+//            }
+//
+//            @Override
+//            public void onError(Exception ex) {
+//                Log.e(TAG, "onError() returned: " + ex);
+//            }
+//        };
+//
+//        webSocketClient.connect();
+//    }
+
+
+    private String address = "ws://ws.t.xianghuanji.com:80/echo";
+    private URI uri;
+    private static final String TAG = "JavaWebSocket";
+    private WebSocketClient mWebSocketClient;
+
+    private void connectionWs1() {
+        try {
+            uri = new URI(address);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        if (null == mWebSocketClient) {
+            mWebSocketClient = new WebSocketClient(uri) {
+                @Override
+                public void onOpen(ServerHandshake serverHandshake) {
+                    Log.e(TAG, "onOpen: ");
+                }
+
+                @Override
+                public void onMessage(String s) {
+                    Log.e(TAG, "onMessage: " + s);
+                }
+
+                @Override
+                public void onClose(int i, String s, boolean b) {
+                    Log.e(TAG, "onClose: " + " i=" + i + " s=" + i + " b=" + b);
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    Log.e(TAG, "onError: " + e);
+                }
+            };
+            mWebSocketClient.connect();
+        }
+
+    }
+
+    private void connectionWs() {
+        AsyncHttpClient.getDefaultInstance().websocket(
+                "ws://192.168.1.135",// webSocket地址
+                "8080/echo",// 端口
+                new AsyncHttpClient.WebSocketConnectCallback() {
+                    @Override
+                    public void onCompleted(Exception ex, WebSocket webSocket) {
+                        if (ex != null) {
+                            ex.printStackTrace();
+                            return;
+                        }
+                        webSocket.send("a string");// 发送消息的方法
+                        webSocket.send(new byte[10]);
+                        webSocket.setStringCallback(new WebSocket.StringCallback() {
+                            public void onStringAvailable(String s) {
+                                Log.e("connectionWs", "onStringAvailable: " + s);
+                            }
+                        });
+                        webSocket.setDataCallback(new DataCallback() {
+                            public void onDataAvailable(DataEmitter emitter, ByteBufferList byteBufferList) {
+                                Log.e("connectionWs", "I got some bytes!");
+                                // note that this data has been read
+                                byteBufferList.recycle();
+                            }
+                        });
+                    }
+                });
     }
 
     private void setImage() {
