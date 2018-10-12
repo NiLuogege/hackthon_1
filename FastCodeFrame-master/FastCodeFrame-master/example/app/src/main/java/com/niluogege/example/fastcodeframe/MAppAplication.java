@@ -33,7 +33,8 @@ public class MAppAplication extends BaseApplication {
         imageMap.put(0, new ImageInfo("臭臭", R.mipmap.tx_1));
         imageMap.put(1, new ImageInfo("产品小狗狗", R.mipmap.tx_2));
         imageMap.put(2, new ImageInfo("乐园的龙猫", R.mipmap.tx_3));
-        imageMap.put(3, new ImageInfo("LY", R.mipmap.tx_4));
+        imageMap.put(3, new ImageInfo("LY_1", R.mipmap.tx_4));
+        imageMap.put(4, new ImageInfo("LY_2", R.mipmap.tx_5));
     }
 
     public static MAppAplication getInstance() {
