@@ -33,7 +33,7 @@ public class MAppAplication extends BaseApplication {
         voideMap.put(6, new VideoInfo("dog", R.raw.dog));
         voideMap.put(7, new VideoInfo("pag", R.raw.pag));
         voideMap.put(8, new VideoInfo("乐园", R.raw.ly));
-        voideMap.put(7, new VideoInfo("雅妮", R.raw.yn));
+        voideMap.put(9, new VideoInfo("雅妮", R.raw.yn));
 
         imageMap = new LinkedHashMap<>();
         imageMap.put(0, new ImageInfo("臭臭", R.mipmap.tx_1));
