@@ -141,7 +141,8 @@ public class DemoActivirty extends AppCompatActivity {
 //    }
 
 
-    private String address = "ws://ws.t.xianghuanji.com:80/echo";
+    private String address = "ws://118.31.223.114:8111";
+//    private String address = "ws://ws.t.xianghuanji.com:80/echo";
     private URI uri;
     private static final String TAG = "JavaWebSocket";
     private WebSocketClient mWebSocketClient;
