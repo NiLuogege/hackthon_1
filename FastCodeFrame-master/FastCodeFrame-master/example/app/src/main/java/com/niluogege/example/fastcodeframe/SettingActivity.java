@@ -51,7 +51,7 @@ public class SettingActivity extends AppCompatActivity {
         videoInfos = new ArrayList<>(MAppAplication.getInstance().voideMap.values());
         imageInfos = new ArrayList<>(MAppAplication.getInstance().imageMap.values());
 
-        SPUtil.save(SPUtil.PRODUCT_PROPERTY, Constant.NAME, "用户：" + UUID.randomUUID());
+        SPUtil.save(SPUtil.PRODUCT_PROPERTY, Constant.NAME, "用户：" + UUID.randomUUID().toString().replace("-", ""));
     }
 
     @OnClick(R.id.btn_video)
