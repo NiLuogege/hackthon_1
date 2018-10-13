@@ -385,7 +385,7 @@ public class DemoActivirty extends RxAppCompatActivity {
     }
 
     private void showEndDialog(boolean isWinner) {
-        DialogPlus dialogPlus = DialogUtil.createCommonDialog(this, R.layout.dialog_end, null);
+        DialogPlus dialogPlus = DialogUtil.createCommonDialog(this, R.layout.dialog_end, null, false);
         ImageView iv = (ImageView) dialogPlus.findViewById(R.id.iv);
         if (isWinner) {
             iv.setImageResource(R.mipmap.nb);

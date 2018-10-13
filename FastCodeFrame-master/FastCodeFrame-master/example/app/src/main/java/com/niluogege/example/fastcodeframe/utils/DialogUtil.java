@@ -20,7 +20,7 @@ import com.orhanobut.dialogplus.ViewHolder;
 public class DialogUtil {
 
     public static DialogPlus createCustomDialog(Context context, int layoutId, int contentBgColor,
-                                                int overlayBgColor, OnClickListener onClickListener) {
+                                                int overlayBgColor, OnClickListener onClickListener,boolean cancelable) {
         View customView = LayoutInflater.from(context.getApplicationContext()).inflate(layoutId, null);
         DialogPlus dialogPlus = DialogPlus.newDialog(context)
                 .setContentHolder(new ViewHolder(customView))
@@ -30,11 +30,16 @@ public class DialogUtil {
                 .setOverlayBackgroundResource(overlayBgColor)
                 .setGravity(Gravity.CENTER)
                 .setOnClickListener(onClickListener)
+                .setCancelable(cancelable)
                 .create();
         return dialogPlus;
     }
 
     public static DialogPlus createCommonDialog(Context context, int layoutId,  OnClickListener onClickListener) {
-        return createCustomDialog(context,layoutId, android.R.color.white, R.color.mask_fg_color,onClickListener);
+        return createCustomDialog(context,layoutId, android.R.color.white, R.color.mask_fg_color,onClickListener,true);
+    }
+
+    public static DialogPlus createCommonDialog(Context context, int layoutId,  OnClickListener onClickListener,boolean cancelable) {
+        return createCustomDialog(context,layoutId, android.R.color.white, R.color.mask_fg_color,onClickListener,cancelable);
     }
 }
