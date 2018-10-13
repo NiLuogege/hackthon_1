@@ -290,6 +290,8 @@ public class DemoActivirty extends RxAppCompatActivity {
             mMediaPlayer.stop();
             mMediaPlayer.release();
         }
+
+        if (mWebSocketClient != null) mWebSocketClient.close();
     }
 
     private void showEndDialog(boolean isWinner) {
@@ -303,4 +305,5 @@ public class DemoActivirty extends RxAppCompatActivity {
         }
         dialogPlus.show();
     }
+
 }
