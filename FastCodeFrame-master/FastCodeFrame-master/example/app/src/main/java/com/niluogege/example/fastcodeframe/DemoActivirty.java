@@ -20,9 +20,11 @@ import com.niluogege.example.commonsdk.network.RetryWithDelay;
 import com.niluogege.example.fastcodeframe.bean.VideoInfo;
 import com.niluogege.example.fastcodeframe.net.RestfulApi;
 import com.niluogege.example.fastcodeframe.utils.Constant;
+import com.niluogege.example.fastcodeframe.utils.DialogUtil;
 import com.niluogege.example.fastcodeframe.utils.SPUtil;
 import com.niluogege.example.fastcodeframe.utils.StatusBarUtil;
 import com.niluogege.example.fastcodeframe.view.explosionfield.ExplosionField;
+import com.orhanobut.dialogplus.DialogPlus;
 import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
 
 import org.java_websocket.client.WebSocketClient;
@@ -94,6 +96,8 @@ public class DemoActivirty extends RxAppCompatActivity {
                 riv.setScaleY(1);
                 riv.setX(randomX);
                 riv.setY(randomY);
+
+                showEndDialog();
             }
         });
 
@@ -315,5 +319,10 @@ public class DemoActivirty extends RxAppCompatActivity {
             mMediaPlayer.stop();
             mMediaPlayer.release();
         }
+    }
+
+    private void showEndDialog(){
+        DialogPlus dialogPlus = DialogUtil.createCommonDialog(this, R.layout.dialog_end, null);
+        dialogPlus.show();
     }
 }
