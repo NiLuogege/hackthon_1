@@ -58,6 +58,7 @@ public class DemoActivirty extends RxAppCompatActivity {
     private int roomId;
     private TextView tv_countDown;
     private View rl_top;
+    private int pot_id = 0;
 
 
     @Override
@@ -119,34 +120,35 @@ public class DemoActivirty extends RxAppCompatActivity {
         connectionWs1();
 
 
-        enter();
+//        enter();
     }
 
-    private void enter() {
-        RestfulApi.getApiService().room(1, 0)
-                .subscribeOn(Schedulers.io())
-                .compose(DemoActivirty.this.bindToLifecycle())//compose方法需要在subscribeOn方法之后使用，因为在测试的过程中发现，将compose方法放在subscribeOn方法之前，如果在被观察者中执行了阻塞方法，比如Thread.sleep()，取消订阅后该阻塞方法不会被中断。
-                .retryWhen(new RetryWithDelay())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DefaultObserver<Integer>() {
-
-                    @Override
-                    protected void onsuccess(Integer o) {
-                        if (o != null) {
-                            roomId = o;
-                            Log.e(TAG, "roomId:" + roomId);
-                        }
-                    }
-
-                    @Override
-                    protected void onFail(Throwable throwable) {
-                        Log.e(TAG, throwable.getMessage());
-
-                    }
-                });
-    }
+//    private void enter() {
+//        RestfulApi.getApiService().room(1, 0)
+//                .subscribeOn(Schedulers.io())
+//                .compose(DemoActivirty.this.bindToLifecycle())//compose方法需要在subscribeOn方法之后使用，因为在测试的过程中发现，将compose方法放在subscribeOn方法之前，如果在被观察者中执行了阻塞方法，比如Thread.sleep()，取消订阅后该阻塞方法不会被中断。
+//                .retryWhen(new RetryWithDelay())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(new DefaultObserver<Integer>() {
+//
+//                    @Override
+//                    protected void onsuccess(Integer o) {
+//                        if (o != null) {
+//                            roomId = o;
+//                            Log.e(TAG, "roomId:" + roomId);
+//                        }
+//                    }
+//
+//                    @Override
+//                    protected void onFail(Throwable throwable) {
+//                        Log.e(TAG, throwable.getMessage());
+//
+//                    }
+//                });
+//    }
 
     private void randomPoint() {
+        pot_id++;
         float randomX = getRandomX();
         float randomY = getRandomY();
 
@@ -160,7 +162,7 @@ public class DemoActivirty extends RxAppCompatActivity {
 
     private void update() {
 
-        RestfulApi.getApiService().update(name.toString(), roomId)
+        RestfulApi.getApiService().update(name.toString(), roomId, pot_id)
                 .subscribeOn(Schedulers.io())
                 .compose(DemoActivirty.this.bindToLifecycle())//compose方法需要在subscribeOn方法之后使用，因为在测试的过程中发现，将compose方法放在subscribeOn方法之前，如果在被观察者中执行了阻塞方法，比如Thread.sleep()，取消订阅后该阻塞方法不会被中断。
                 .retryWhen(new RetryWithDelay())
@@ -245,6 +247,7 @@ public class DemoActivirty extends RxAppCompatActivity {
         Data data = parse.data;
         if (data != null) {
             count = (data.begin_time - data.client_time);
+            roomId = data.game_id;
 
             runOnUiThread(new Runnable() {
                 @Override
@@ -253,8 +256,10 @@ public class DemoActivirty extends RxAppCompatActivity {
                         @Override
                         public void onTick(long l) {
                             count--;
-                            tv_countDown.setText(count + "s");
-                            Log.e("DemoActivirty", "count= " + count);
+                            if (count >= 0) {
+                                tv_countDown.setText(count + "s");
+                                Log.e("DemoActivirty", "count= " + count);
+                            }
                         }
 
                         @Override
@@ -385,7 +390,7 @@ public class DemoActivirty extends RxAppCompatActivity {
         if (isWinner) {
             iv.setImageResource(R.mipmap.nb);
         } else {
-            iv.setImageResource(R.mipmap.nb);
+            iv.setImageResource(R.mipmap.loser);
             iv.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         }
         dialogPlus.show();

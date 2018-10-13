@@ -9,7 +9,7 @@ import retrofit2.http.Query;
 public interface ApiService {
 
     @GET("hackathon/count")
-    Observable<Object> update(@Query("user_name") String user_name, @Query("room_id") int room_id);
+    Observable<Object> update(@Query("user_name") String user_name, @Query("room_id") int room_id, @Query("pot_id") int pot_id);
 
     /**
      * 游戏结果
@@ -18,7 +18,7 @@ public interface ApiService {
      * @return
      */
     @GET("hackathon/result")
-    Observable<ResultInfo> result(@Query("user_name") String user_name,@Query("room_id") int room_id);
+    Observable<ResultInfo> result(@Query("user_name") String user_name, @Query("room_id") int room_id);
 
     /**
      * 开始结束
