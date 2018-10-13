@@ -4,7 +4,6 @@ import android.content.Context;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -16,11 +15,15 @@ import com.koushikdutta.async.DataEmitter;
 import com.koushikdutta.async.callback.DataCallback;
 import com.koushikdutta.async.http.AsyncHttpClient;
 import com.koushikdutta.async.http.WebSocket;
+import com.niluogege.example.commonsdk.network.DefaultObserver;
+import com.niluogege.example.commonsdk.network.RetryWithDelay;
 import com.niluogege.example.fastcodeframe.bean.VideoInfo;
+import com.niluogege.example.fastcodeframe.net.RestfulApi;
 import com.niluogege.example.fastcodeframe.utils.Constant;
 import com.niluogege.example.fastcodeframe.utils.SPUtil;
 import com.niluogege.example.fastcodeframe.utils.StatusBarUtil;
 import com.niluogege.example.fastcodeframe.view.explosionfield.ExplosionField;
+import com.trello.rxlifecycle2.components.support.RxAppCompatActivity;
 
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
@@ -29,12 +32,15 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Random;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
+
 
 /**
  * Created by niluogege on 2018/10/10.
  */
 
-public class DemoActivirty extends AppCompatActivity {
+public class DemoActivirty extends RxAppCompatActivity {
 
     private int[] screenSize;
     private int imagewidth;
@@ -100,6 +106,8 @@ public class DemoActivirty extends AppCompatActivity {
                 if (mMediaPlayer != null) {
                     mMediaPlayer.start();
                 }
+
+                update();
             }
         });
 
@@ -107,6 +115,27 @@ public class DemoActivirty extends AppCompatActivity {
         connectionWs1();
 //        connectionWs2();
 
+    }
+
+    private void update() {
+        Object name = SPUtil.get(SPUtil.PRODUCT_PROPERTY, Constant.NAME);
+        RestfulApi.getApiService().update(name.toString())
+                .subscribeOn(Schedulers.io())
+                .compose(DemoActivirty.this.bindToLifecycle())//compose方法需要在subscribeOn方法之后使用，因为在测试的过程中发现，将compose方法放在subscribeOn方法之前，如果在被观察者中执行了阻塞方法，比如Thread.sleep()，取消订阅后该阻塞方法不会被中断。
+                .retryWhen(new RetryWithDelay())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new DefaultObserver<Object>() {
+                    @Override
+                    protected void onsuccess(Object o) {
+                        Log.e(TAG, o.toString());
+                    }
+
+                    @Override
+                    protected void onFail(Throwable throwable) {
+                        Log.e(TAG, throwable.getMessage());
+
+                    }
+                });
     }
 
 //    private void connectionWs2() {
@@ -142,7 +171,7 @@ public class DemoActivirty extends AppCompatActivity {
 
 
     private String address = "ws://118.31.223.114:8111";
-//    private String address = "ws://ws.t.xianghuanji.com:80/echo";
+    //    private String address = "ws://ws.t.xianghuanji.com:80/echo";
     private URI uri;
     private static final String TAG = "JavaWebSocket";
     private WebSocketClient mWebSocketClient;
