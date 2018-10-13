@@ -12,7 +12,7 @@ public class RestfulApi {
 
     public static ApiService getApiService() {
         if (apiService == null) {
-            apiService = RetrofitManager.getInstence().getRetrofit(ApiService.class, "http://test18.bfa.t.xianghuanji.com/");
+            apiService = RetrofitManager.getInstence().getRetrofit(ApiService.class, "http://test18.hackathon.t.xianghuanji.com/");
         }
         return apiService;
     }

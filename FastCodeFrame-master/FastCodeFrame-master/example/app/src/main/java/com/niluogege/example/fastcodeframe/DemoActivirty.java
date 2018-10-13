@@ -3,6 +3,7 @@ package com.niluogege.example.fastcodeframe;
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
@@ -10,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
@@ -54,6 +56,8 @@ public class DemoActivirty extends RxAppCompatActivity {
     private View riv;
     private Object name;
     private int roomId;
+    private TextView tv_countDown;
+    private View rl_top;
 
 
     @Override
@@ -67,8 +71,9 @@ public class DemoActivirty extends RxAppCompatActivity {
         screenSize = getScreenSize(this);
         statusBarHeight = getStatusBarHeight(this);
 
-        View btn = findViewById(R.id.btn);
         riv = findViewById(R.id.riv);
+        tv_countDown = findViewById(R.id.tv_countDown);
+        rl_top = findViewById(R.id.rl_top);
 
 
         imagewidth = dip2px(this, 50);
@@ -85,16 +90,6 @@ public class DemoActivirty extends RxAppCompatActivity {
                 if (mMediaPlayer != null) {
                     mMediaPlayer.pause();
                 }
-            }
-        });
-
-//        Log.e("DemoActivirty", "imagewidth:" + imagewidth + " imageHeight:" + imageHeight + " screenwidth: " + screenSize[0] + " screenHeight: " + screenSize[1]);
-
-        btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                randomPoint();
-                showEndDialog(false);
             }
         });
 
@@ -191,6 +186,8 @@ public class DemoActivirty extends RxAppCompatActivity {
     private static final String TAG = "JavaWebSocket";
     private WebSocketClient mWebSocketClient;
 
+    long count = 0l;
+
     private void connectionWs1() {
         try {
             uri = new URI(address);
@@ -202,8 +199,10 @@ public class DemoActivirty extends RxAppCompatActivity {
                 @Override
                 public void onOpen(ServerHandshake serverHandshake) {
                     Log.e(TAG, "onOpen: " + serverHandshake.toString());
+
+
                     NodeInfo info = new NodeInfo();
-                    info.action = "game_start";
+                    info.action = "game_prepare";
                     info.data = new Data();
                     String jsonString = JSON.toJSONString(info);
                     Log.e("DemoActivirty", "jsonString=" + jsonString);
@@ -221,6 +220,8 @@ public class DemoActivirty extends RxAppCompatActivity {
                             runOnUiThread(() -> randomPoint());
                         } else if (TextUtils.equals("game_over", action)) {
                             gameOver();
+                        } else if (TextUtils.equals("game_wait_time", action)) {
+                            waitTime(parse);
                         }
                     }
                 }
@@ -238,6 +239,39 @@ public class DemoActivirty extends RxAppCompatActivity {
             mWebSocketClient.connect();
         }
 
+    }
+
+    private void waitTime(NodeInfo parse) {
+        Data data = parse.data;
+        if (data != null) {
+            count = (data.begin_time - data.client_time);
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    CountDownTimer timer = new CountDownTimer(count * 1000, 1000) {
+                        @Override
+                        public void onTick(long l) {
+                            count--;
+                            tv_countDown.setText(count + "s");
+                            Log.e("DemoActivirty", "count= " + count);
+                        }
+
+                        @Override
+                        public void onFinish() {
+                            rl_top.setVisibility(View.GONE);
+                            NodeInfo info = new NodeInfo();
+                            info.action = "game_start";
+                            info.data = new Data();
+                            String jsonString = JSON.toJSONString(info);
+                            Log.e("DemoActivirty", "game_start");
+                            mWebSocketClient.send(jsonString);
+                        }
+                    };
+                    timer.start();
+                }
+            });
+        }
     }
 
     private void gameOver() {
