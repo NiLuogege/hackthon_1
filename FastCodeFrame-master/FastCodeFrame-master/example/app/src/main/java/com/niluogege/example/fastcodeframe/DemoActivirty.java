@@ -17,6 +17,7 @@ import com.niluogege.example.commonsdk.network.DefaultObserver;
 import com.niluogege.example.commonsdk.network.RetryWithDelay;
 import com.niluogege.example.fastcodeframe.bean.Data;
 import com.niluogege.example.fastcodeframe.bean.NodeInfo;
+import com.niluogege.example.fastcodeframe.bean.ResultInfo;
 import com.niluogege.example.fastcodeframe.bean.VideoInfo;
 import com.niluogege.example.fastcodeframe.net.RestfulApi;
 import com.niluogege.example.fastcodeframe.utils.Constant;
@@ -52,6 +53,7 @@ public class DemoActivirty extends RxAppCompatActivity {
     private MediaPlayer mMediaPlayer;
     private View riv;
     private Object name;
+    private int roomId;
 
 
     @Override
@@ -121,6 +123,32 @@ public class DemoActivirty extends RxAppCompatActivity {
 
         connectionWs1();
 
+
+        enter();
+    }
+
+    private void enter() {
+        RestfulApi.getApiService().room(1, 0)
+                .subscribeOn(Schedulers.io())
+                .compose(DemoActivirty.this.bindToLifecycle())//compose方法需要在subscribeOn方法之后使用，因为在测试的过程中发现，将compose方法放在subscribeOn方法之前，如果在被观察者中执行了阻塞方法，比如Thread.sleep()，取消订阅后该阻塞方法不会被中断。
+                .retryWhen(new RetryWithDelay())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new DefaultObserver<Integer>() {
+
+                    @Override
+                    protected void onsuccess(Integer o) {
+                        if (o != null) {
+                            roomId = o;
+                            Log.e(TAG, "roomId:" + roomId);
+                        }
+                    }
+
+                    @Override
+                    protected void onFail(Throwable throwable) {
+                        Log.e(TAG, throwable.getMessage());
+
+                    }
+                });
     }
 
     private void randomPoint() {
@@ -137,7 +165,7 @@ public class DemoActivirty extends RxAppCompatActivity {
 
     private void update() {
 
-        RestfulApi.getApiService().update(name.toString())
+        RestfulApi.getApiService().update(name.toString(), roomId)
                 .subscribeOn(Schedulers.io())
                 .compose(DemoActivirty.this.bindToLifecycle())//compose方法需要在subscribeOn方法之后使用，因为在测试的过程中发现，将compose方法放在subscribeOn方法之前，如果在被观察者中执行了阻塞方法，比如Thread.sleep()，取消订阅后该阻塞方法不会被中断。
                 .retryWhen(new RetryWithDelay())
@@ -192,7 +220,7 @@ public class DemoActivirty extends RxAppCompatActivity {
                         if (TextUtils.equals("time_limited_point", action)) {
                             runOnUiThread(() -> randomPoint());
                         } else if (TextUtils.equals("game_over", action)) {
-                            showEndDialog(true);
+                            gameOver();
                         }
                     }
                 }
@@ -210,6 +238,29 @@ public class DemoActivirty extends RxAppCompatActivity {
             mWebSocketClient.connect();
         }
 
+    }
+
+    private void gameOver() {
+        RestfulApi.getApiService().result(name.toString(), roomId)
+                .subscribeOn(Schedulers.io())
+                .compose(DemoActivirty.this.bindToLifecycle())//compose方法需要在subscribeOn方法之后使用，因为在测试的过程中发现，将compose方法放在subscribeOn方法之前，如果在被观察者中执行了阻塞方法，比如Thread.sleep()，取消订阅后该阻塞方法不会被中断。
+                .retryWhen(new RetryWithDelay())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new DefaultObserver<ResultInfo>() {
+                    @Override
+                    protected void onsuccess(ResultInfo info) {
+                        if (info != null) {
+                            boolean the_one = info.is_the_one();
+                            showEndDialog(the_one);
+                        }
+                    }
+
+                    @Override
+                    protected void onFail(Throwable throwable) {
+                        Log.e(TAG, throwable.getMessage());
+
+                    }
+                });
     }
 
 
