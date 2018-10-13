@@ -29,6 +29,7 @@
             android:layout_width="@dimen/qb_px_70"
             android:layout_height="@dimen/qb_px_70"
             android:src="@mipmap/image_1"
+            android:visibility="gone"
             app:is_circle="true" />
     </LinearLayout>
 

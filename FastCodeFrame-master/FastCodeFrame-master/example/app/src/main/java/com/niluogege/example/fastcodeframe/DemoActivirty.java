@@ -4,19 +4,19 @@ import android.content.Context;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
-import com.koushikdutta.async.ByteBufferList;
-import com.koushikdutta.async.DataEmitter;
-import com.koushikdutta.async.callback.DataCallback;
-import com.koushikdutta.async.http.AsyncHttpClient;
-import com.koushikdutta.async.http.WebSocket;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.niluogege.example.commonsdk.network.DefaultObserver;
 import com.niluogege.example.commonsdk.network.RetryWithDelay;
+import com.niluogege.example.fastcodeframe.bean.Data;
+import com.niluogege.example.fastcodeframe.bean.NodeInfo;
 import com.niluogege.example.fastcodeframe.bean.VideoInfo;
 import com.niluogege.example.fastcodeframe.net.RestfulApi;
 import com.niluogege.example.fastcodeframe.utils.Constant;
@@ -51,6 +51,7 @@ public class DemoActivirty extends RxAppCompatActivity {
     private ExplosionField explosionField;
     private MediaPlayer mMediaPlayer;
     private View riv;
+    private Object name;
 
 
     @Override
@@ -58,6 +59,8 @@ public class DemoActivirty extends RxAppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_demo);
         StatusBarUtil.setTransparentForImageViewInFragment(this, null);
+
+        name = SPUtil.get(SPUtil.PRODUCT_PROPERTY, Constant.NAME);
 
         screenSize = getScreenSize(this);
         statusBarHeight = getStatusBarHeight(this);
@@ -88,16 +91,8 @@ public class DemoActivirty extends RxAppCompatActivity {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                float randomX = getRandomX();
-                float randomY = getRandomY();
-
-                riv.setAlpha(1);
-                riv.setScaleX(1);
-                riv.setScaleY(1);
-                riv.setX(randomX);
-                riv.setY(randomY);
-
-                showEndDialog();
+                randomPoint();
+                showEndDialog(false);
             }
         });
 
@@ -112,17 +107,36 @@ public class DemoActivirty extends RxAppCompatActivity {
                 }
 
                 update();
+
+                NodeInfo info = new NodeInfo();
+                info.action = "hit_point";
+                Data data = new Data();
+                info.data = data;
+                data.user_id = name.toString();
+                String jsonString = JSON.toJSONString(info);
+                Log.e("DemoActivirty", "jsonString=" + jsonString);
+                mWebSocketClient.send(jsonString);
             }
         });
 
-//        connectionWs();
         connectionWs1();
-//        connectionWs2();
 
     }
 
+    private void randomPoint() {
+        float randomX = getRandomX();
+        float randomY = getRandomY();
+
+        riv.setVisibility(View.VISIBLE);
+        riv.setAlpha(1);
+        riv.setScaleX(1);
+        riv.setScaleY(1);
+        riv.setX(randomX);
+        riv.setY(randomY);
+    }
+
     private void update() {
-        Object name = SPUtil.get(SPUtil.PRODUCT_PROPERTY, Constant.NAME);
+
         RestfulApi.getApiService().update(name.toString())
                 .subscribeOn(Schedulers.io())
                 .compose(DemoActivirty.this.bindToLifecycle())//compose方法需要在subscribeOn方法之后使用，因为在测试的过程中发现，将compose方法放在subscribeOn方法之前，如果在被观察者中执行了阻塞方法，比如Thread.sleep()，取消订阅后该阻塞方法不会被中断。
@@ -142,40 +156,9 @@ public class DemoActivirty extends RxAppCompatActivity {
                 });
     }
 
-//    private void connectionWs2() {
-//        try {
-//            uri = new URI(address);
-//        } catch (URISyntaxException e) {
-//            e.printStackTrace();
-//        }
-//        WebSocketClient webSocketClient = new WebSocketClient(uri, new Draft_75()) {
-//            @Override
-//            public void onOpen(ServerHandshake handshakedata) {
-//                Log.e(TAG, "run() returned: " + "连接到服务器");
-//            }
-//
-//            @Override
-//            public void onMessage(String message) {
-//                Log.e(TAG, "run() returned: " + message);
-//            }
-//
-//            @Override
-//            public void onClose(int code, String reason, boolean remote) {
-//                Log.e(TAG, "onClose() returned: " + reason);
-//            }
-//
-//            @Override
-//            public void onError(Exception ex) {
-//                Log.e(TAG, "onError() returned: " + ex);
-//            }
-//        };
-//
-//        webSocketClient.connect();
-//    }
 
-
-    private String address = "ws://118.31.223.114:8111";
-    //    private String address = "ws://ws.t.xianghuanji.com:80/echo";
+    //    private String address = "ws://118.31.223.114:8111";
+    private String address = "ws://ws.t.xianghuanji.com:80/multi_online_game";
     private URI uri;
     private static final String TAG = "JavaWebSocket";
     private WebSocketClient mWebSocketClient;
@@ -190,12 +173,28 @@ public class DemoActivirty extends RxAppCompatActivity {
             mWebSocketClient = new WebSocketClient(uri) {
                 @Override
                 public void onOpen(ServerHandshake serverHandshake) {
-                    Log.e(TAG, "onOpen: ");
+                    Log.e(TAG, "onOpen: " + serverHandshake.toString());
+                    NodeInfo info = new NodeInfo();
+                    info.action = "game_start";
+                    info.data = new Data();
+                    String jsonString = JSON.toJSONString(info);
+                    Log.e("DemoActivirty", "jsonString=" + jsonString);
+                    mWebSocketClient.send(jsonString);
                 }
 
                 @Override
                 public void onMessage(String s) {
                     Log.e(TAG, "onMessage: " + s);
+                    if (s != null && !TextUtils.equals("", s)) {
+                        NodeInfo parse = JSON.parseObject(s, new TypeReference<NodeInfo>() {
+                        });
+                        String action = parse.action;
+                        if (TextUtils.equals("time_limited_point", action)) {
+                            runOnUiThread(() -> randomPoint());
+                        } else if (TextUtils.equals("game_over", action)) {
+                            showEndDialog(true);
+                        }
+                    }
                 }
 
                 @Override
@@ -213,34 +212,6 @@ public class DemoActivirty extends RxAppCompatActivity {
 
     }
 
-    private void connectionWs() {
-        AsyncHttpClient.getDefaultInstance().websocket(
-                "ws://192.168.1.135",// webSocket地址
-                "8080/echo",// 端口
-                new AsyncHttpClient.WebSocketConnectCallback() {
-                    @Override
-                    public void onCompleted(Exception ex, WebSocket webSocket) {
-                        if (ex != null) {
-                            ex.printStackTrace();
-                            return;
-                        }
-                        webSocket.send("a string");// 发送消息的方法
-                        webSocket.send(new byte[10]);
-                        webSocket.setStringCallback(new WebSocket.StringCallback() {
-                            public void onStringAvailable(String s) {
-                                Log.e("connectionWs", "onStringAvailable: " + s);
-                            }
-                        });
-                        webSocket.setDataCallback(new DataCallback() {
-                            public void onDataAvailable(DataEmitter emitter, ByteBufferList byteBufferList) {
-                                Log.e("connectionWs", "I got some bytes!");
-                                // note that this data has been read
-                                byteBufferList.recycle();
-                            }
-                        });
-                    }
-                });
-    }
 
     private void setImage() {
         Object o = SPUtil.get(SPUtil.PRODUCT_PROPERTY, Constant.IMAGE_SELECT);
@@ -321,8 +292,15 @@ public class DemoActivirty extends RxAppCompatActivity {
         }
     }
 
-    private void showEndDialog(){
+    private void showEndDialog(boolean isWinner) {
         DialogPlus dialogPlus = DialogUtil.createCommonDialog(this, R.layout.dialog_end, null);
+        ImageView iv = (ImageView) dialogPlus.findViewById(R.id.iv);
+        if (isWinner) {
+            iv.setImageResource(R.mipmap.nb);
+        } else {
+            iv.setImageResource(R.mipmap.nb);
+            iv.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+        }
         dialogPlus.show();
     }
 }
